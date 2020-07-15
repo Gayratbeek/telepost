@@ -5,6 +5,7 @@ class Category(models.Model):
     """Категория поста"""
     name = models.CharField("Категория", max_length=64)
     description = models.TextField("Описание")
+    url = models.SlugField(max_length=160, unique=True)
 
     def __str__(self):
         return self.name
