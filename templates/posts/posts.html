@@ -6,9 +6,7 @@
 </head>
 <body>
 {% for post in post_list %}
-    {{ post.title }}
-    {{ post.magazine }}
-
+<a href="/{% post.get_absolute_url %}">{{ post.title }}</a>
 {% endfor %}
 </body>
 </html>

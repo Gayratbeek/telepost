@@ -1,11 +1,17 @@
 from django.shortcuts import render
+from django.views.generic import ListView, DetailView
 from django.views.generic.base import View
 
 from .models import Post
 
 
-class PostView(View):
+class PostView(ListView):
     """Список постов"""
-    def get(self, request):
-        posts = Post.objects.all()
-        return render(request, "posts/post_list.html", {"post_list": posts})
+    model = Post
+    queryset = Post.objects.filter(draft=False)
+
+
+class PostDetailView(DetailView):
+    """Полное описание фильма"""
+    model = Post
+    slug_field = 'url'

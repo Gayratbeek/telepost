@@ -49,6 +49,9 @@ class Post(models.Model):
         verbose_name = "Пост"
         verbose_name_plural = "Посты"
 
+    def get_absolute_url(self):
+        return reverse("post_detail", kwargs={"slug": self.url})
+
 
 class PostImages(models.Model):
     """Изображения поста в большом количестве"""
