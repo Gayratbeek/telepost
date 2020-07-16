@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 
 class Category(models.Model):
@@ -51,6 +52,9 @@ class Post(models.Model):
 
     def get_absolute_url(self):
         return reverse("post_detail", kwargs={"slug": self.url})
+
+    def get_review(self):
+        return self.reviews_set.filter(parent__isnull=True)
 
 
 class PostImages(models.Model):
