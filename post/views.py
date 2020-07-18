@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.views.generic import ListView, DetailView
 from django.views.generic.base import View
 
-from .models import Post
+from .models import Post, Magazine
 from .forms import ReviewForm
 
 
@@ -32,3 +32,9 @@ class AddReview(View):
             form.post = posting
             form.save()
         return redirect(posting.get_absolute_url())
+
+
+class MagazineView(DetailView):
+    model = Magazine
+    template_name = 'post/magazine.html'
+    slug_field = "name"

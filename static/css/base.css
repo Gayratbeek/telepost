@@ -1,0 +1,7 @@
+img {
+    width: 150px;
+}
+p {
+  overflow: hidden;
+  max-width: 20ch;
+}

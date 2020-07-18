@@ -28,6 +28,8 @@ class Magazine(models.Model):
         verbose_name = "Магазин"
         verbose_name_plural = "Магазины"
 
+    def get_absolute_url(self):
+        return reverse('magazine_detail', kwargs={"slug": self.name})
 
 class Post(models.Model):
     """Пост"""
@@ -60,7 +62,7 @@ class Post(models.Model):
 class PostImages(models.Model):
     """Изображения поста в большом количестве"""
     title = models.CharField("Заголовок", max_length=100)
-    description = models.TextField("Описание")
+    # description = models.TextField("Описание")
     image = models.ImageField("Изображение", upload_to="product_images/")
     post = models.ForeignKey(Post, verbose_name="Пост", on_delete=models.CASCADE)
 

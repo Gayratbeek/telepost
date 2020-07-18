@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div>
+    {% for magazine in post.magazine.all %}
+    Magazin - <a href="{% url 'magazine_detail' magazine.name %}">{{ magazine.name }}</a>
+    {% endfor %}
+</div>
+</body>
+</html>
