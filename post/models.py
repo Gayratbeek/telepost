@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from django.contrib.auth.models import User
 
 
 class Category(models.Model):
@@ -18,11 +19,11 @@ class Category(models.Model):
 
 class Magazine(models.Model):
     """Магазин"""
-    name = models.CharField("Название магазина", max_length=32)
+    market = models.ForeignKey(User, on_delete=models.CASCADE)
     telelink = models.CharField("Ссылка на телеграм", max_length=100)
 
     def __str__(self):
-        return self.name
+        return self.market.username
 
     class Meta:
         verbose_name = "Магазин"
@@ -30,6 +31,7 @@ class Magazine(models.Model):
 
     def get_absolute_url(self):
         return reverse('magazine_detail', kwargs={"slug": self.name})
+
 
 class Post(models.Model):
     """Пост"""

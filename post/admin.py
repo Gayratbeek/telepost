@@ -69,12 +69,12 @@ class PostAdmin(admin.ModelAdmin):
 @admin.register(Reviews)
 class ReviewAdmin(admin.ModelAdmin):
     list_display = ("name", "email", "parent", "post", "id")
-    readonly_fields = ("name", "email")
 
 
 
-
-admin.site.register(Magazine)
+@admin.register(Magazine)
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = ("telelink",)
 
 
 @admin.register(PostImages)

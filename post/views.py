@@ -1,9 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, DetailView
 from django.views.generic.base import View
 
-from .models import Post, Magazine
+from .models import Post
 from .forms import ReviewForm
+from django.contrib.auth.models import User
 
 
 class PostView(ListView):
@@ -34,7 +35,14 @@ class AddReview(View):
         return redirect(posting.get_absolute_url())
 
 
-class MagazineView(DetailView):
-    model = Magazine
-    template_name = 'post/magazine.html'
-    slug_field = "name"
+class MagazinePostListView(ListView):
+    model = Post
+    template_name = 'post/magazine.html'  # <app>/<model>_<viewtype>.html
+    context_object_name = 'posts'
+    paginate_by = 5
+
+    def get_queryset(self):
+        user = get_object_or_404(User, username=self.kwargs.get('username'))
+        return Post.objects.filter(magazine__market=user)
+
+    # order_by('-date_posted')

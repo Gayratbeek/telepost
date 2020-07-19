@@ -6,8 +6,15 @@
 </head>
 <body>
 <div>
-    {% for magazine in post.magazine.all %}
-    Magazin - <a href="{% url 'magazine_detail' magazine.name %}">{{ magazine.name }}</a>
+    {% for post in posts %}
+        <article class="media content-section">
+          {{ post.magazine.telelink }}
+          <div class="media-body">
+            <div class="article-metadata">
+              <a class="mr-2" href="{% url 'magazine-posts' post.magazine.name %}">{{ post.magazine.name }}</a>
+
+          </div>
+        </article>
     {% endfor %}
 </div>
 </body>
