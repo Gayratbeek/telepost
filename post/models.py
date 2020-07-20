@@ -26,8 +26,13 @@ class Category(models.Model):
 
 class Magazine(models.Model):
     """Магазин"""
-    market = models.ForeignKey(User, on_delete=models.CASCADE)
+    market = models.ForeignKey(User, on_delete=models.CASCADE, default=str(User.username), blank=True, null=True)
     telelink = models.CharField("Ссылка на телеграм", max_length=100)
+    url = models.CharField("Название магазина", max_length=64, blank=True, null=True)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = None
 
     def __str__(self):
         return self.market.username
@@ -39,6 +44,12 @@ class Magazine(models.Model):
     def get_absolute_url(self):
         return reverse('magazine_detail', kwargs={"slug": self.name})
 
+    def save(self):
+        super(Magazine, self).save()
+        if not self.url:
+            self.url = self.market.username
+            super(Magazine, self).save()
+
 
 class Post(models.Model):
     """Пост"""
@@ -46,7 +57,7 @@ class Post(models.Model):
     poster = models.ImageField("Главное фото", upload_to="product_images/")
     description = models.TextField("Описание")
     price = models.PositiveIntegerField("Стоимость", default=0, help_text="Указывать в сумах")
-    magazine = models.ForeignKey(Magazine.market, verbose_name="Поставщик",
+    magazine = models.ForeignKey(Magazine, verbose_name="Поставщик",
                                  on_delete=models.SET_DEFAULT, default='Magazine')
     category = models.ForeignKey(Category, verbose_name="Категория", on_delete=models.SET_NULL, null=True)
     url = models.SlugField(max_length=70, unique=True)

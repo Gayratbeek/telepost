@@ -78,6 +78,7 @@ class ReviewAdmin(admin.ModelAdmin):
 @admin.register(Magazine)
 class ReviewAdmin(admin.ModelAdmin):
     list_display = ("telelink",)
+    fields = ("telelink", "market")
 
 
 @admin.register(PostImages)
