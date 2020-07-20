@@ -18,6 +18,9 @@ class PostAdminForm(forms.ModelForm):
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ("id", "name", "url")
     list_display_links = ("name",)
+    fields = ("name",)
+
+
 
 
 class ReviewInlines(admin.TabularInline):
@@ -55,7 +58,7 @@ class PostAdmin(admin.ModelAdmin):
             "fields": ("description", ("price", "poster", "get_image"),)
         }),
         (None, {
-            "fields": ("magazine", "category", "url", "draft",)
+            "fields": ("magazine", "category", "draft",)
         }),
     )
     readonly_fields = ("get_image",)

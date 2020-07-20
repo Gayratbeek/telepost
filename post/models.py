@@ -1,13 +1,14 @@
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
+from django.utils.text import slugify
 
 
 class Category(models.Model):
     """Категория поста"""
     name = models.CharField("Категория", max_length=64)
     description = models.TextField("Описание")
-    url = models.SlugField(max_length=160, unique=True)
+    url = models.SlugField(max_length=70, unique=True, blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -15,6 +16,12 @@ class Category(models.Model):
     class Meta:
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
+
+    def save(self):
+        super(Category, self).save()
+        if not self.url:
+            self.url = slugify(self.name) + '-' + str(self.id)
+            super(Category, self).save()
 
 
 class Magazine(models.Model):
@@ -39,10 +46,10 @@ class Post(models.Model):
     poster = models.ImageField("Главное фото", upload_to="product_images/")
     description = models.TextField("Описание")
     price = models.PositiveIntegerField("Стоимость", default=0, help_text="Указывать в сумах")
-    magazine = models.ForeignKey(Magazine, verbose_name="Поставщик",
+    magazine = models.ForeignKey(Magazine.market, verbose_name="Поставщик",
                                  on_delete=models.SET_DEFAULT, default='Magazine')
     category = models.ForeignKey(Category, verbose_name="Категория", on_delete=models.SET_NULL, null=True)
-    url = models.SlugField(max_length=100, unique=True)
+    url = models.SlugField(max_length=70, unique=True)
     draft = models.BooleanField("Черновик", default=False)
     created = models.DateTimeField(auto_now_add=True, auto_now=False)
     updated = models.DateTimeField(auto_now_add=False, auto_now=True)
@@ -59,6 +66,12 @@ class Post(models.Model):
 
     def get_review(self):
         return self.reviews_set.filter(parent__isnull=True)
+
+    def save(self):
+        super(Post, self).save()
+        if not self.url:
+            self.url = slugify(self.title) + '-' + str(self.id)
+            super(Post, self).save()
 
 
 class PostImages(models.Model):
