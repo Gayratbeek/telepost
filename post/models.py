@@ -34,8 +34,8 @@ class Link(models.Model):
         return '%s' % self.name
 
     class Meta:
-        verbose_name = "Ссылка"
-        verbose_name_plural = "Ссылки"
+        verbose_name = "Магазин"
+        verbose_name_plural = "Магазины"
 
 
 class Magazine(models.Model):
@@ -43,13 +43,15 @@ class Magazine(models.Model):
     market = models.OneToOneField(Link, verbose_name="Название производителя", on_delete=models.CASCADE)
     delivery = models.BooleanField(default=False, verbose_name="Доставка")
     payment_click_uz = models.BooleanField(default=False, verbose_name="Оплата онлайн")
+    poster = models.ImageField("Постер магазина", upload_to="magazine_images/", null=True, blank=True,
+                               default="default.jpeg")
 
     def __str__(self):
         return self.market.name
 
     class Meta:
-        verbose_name = "Магазин"
-        verbose_name_plural = "Магазины"
+        verbose_name = "Возможность магазина"
+        verbose_name_plural = "Возможности магазина"
 
     def get_absolute_url(self):
         return reverse('magazine_detail', kwargs={"slug": self.market.name})
@@ -64,7 +66,8 @@ class Magazine(models.Model):
 class Post(models.Model):
     """Пост"""
     title = models.CharField("Название", max_length=64)
-    poster = models.ImageField("Главное фото", upload_to="product_images/")
+    poster = models.ImageField("Главное фото", upload_to="product_images/", null=True, blank=True,
+                               default="default.jpeg")
     description = models.TextField("Описание")
     price = models.PositiveIntegerField("Стоимость", default=0, help_text="Указывать в сумах")
     magazine = models.ForeignKey(Magazine, verbose_name="Поставщик",

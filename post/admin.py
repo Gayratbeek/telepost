@@ -40,6 +40,12 @@ class ImageInlines(admin.TabularInline):
     get_image.short_description = "Изображение"
 
 
+class MagazineInlines(admin.StackedInline):
+    model = Magazine
+
+
+
+
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
     list_display = ("title", "category", "url", "magazine", "draft")
@@ -81,6 +87,7 @@ class MagazineAdmin(admin.ModelAdmin):
     fields = ("market", "delivery", "payment_click_uz",)
     list_editable = ("delivery", "payment_click_uz",)
 
+
 @admin.register(PostImages)
 class PostImagesAdmin(admin.ModelAdmin):
     list_display = ("title", "post", "get_image")
@@ -97,6 +104,8 @@ admin.site.register(RatingStar)
 @admin.register(Link)
 class LinkAdmin(admin.ModelAdmin):
     list_display = ("name", "telelink", "instalink")
+    inlines = [MagazineInlines]
+
 
 
 
