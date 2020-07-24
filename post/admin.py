@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.gis import forms
 from django.utils.safestring import mark_safe
-from .models import Category, Magazine, Post, PostImages, Rating, RatingStar, Reviews
+from .models import Category, Magazine, Post, PostImages, Rating, RatingStar, Reviews, Link
 
 
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
@@ -76,10 +76,10 @@ class ReviewAdmin(admin.ModelAdmin):
 
 
 @admin.register(Magazine)
-class ReviewAdmin(admin.ModelAdmin):
-    list_display = ("telelink",)
-    fields = ("telelink", "market")
-
+class MagazineAdmin(admin.ModelAdmin):
+    list_display = ("market", "delivery", "payment_click_uz")
+    fields = ("market", "delivery", "payment_click_uz",)
+    list_editable = ("delivery", "payment_click_uz",)
 
 @admin.register(PostImages)
 class PostImagesAdmin(admin.ModelAdmin):
@@ -93,6 +93,12 @@ class PostImagesAdmin(admin.ModelAdmin):
 
 admin.site.register(Rating)
 admin.site.register(RatingStar)
+
+@admin.register(Link)
+class LinkAdmin(admin.ModelAdmin):
+    list_display = ("name", "telelink", "instalink")
+
+
 
 
 def get_image(url):

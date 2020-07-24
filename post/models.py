@@ -24,31 +24,41 @@ class Category(models.Model):
             super(Category, self).save()
 
 
-class Magazine(models.Model):
-    """Магазин"""
-    market = models.ForeignKey(User, on_delete=models.CASCADE, default=str(User.username), blank=True, null=True)
-    telelink = models.CharField("Ссылка на телеграм", max_length=100)
-    url = models.CharField("Название магазина", max_length=64, blank=True, null=True)
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.name = None
+class Link(models.Model):
+    name = models.CharField("Название магазина", max_length=100)
+    telelink = models.CharField("Ссылка на телеграм", max_length=50)
+    instalink = models.CharField("Ссылка на инстаграм", max_length=50)
+    otherlink = models.CharField("Ссылка на иную страницу", max_length=100, null=True, blank=True)
 
     def __str__(self):
-        return self.market.username
+        return '%s' % self.name
+
+    class Meta:
+        verbose_name = "Ссылка"
+        verbose_name_plural = "Ссылки"
+
+
+class Magazine(models.Model):
+    """Магазин"""
+    market = models.OneToOneField(Link, verbose_name="Название производителя", on_delete=models.CASCADE)
+    delivery = models.BooleanField(default=False, verbose_name="Доставка")
+    payment_click_uz = models.BooleanField(default=False, verbose_name="Оплата онлайн")
+
+    def __str__(self):
+        return self.market.name
 
     class Meta:
         verbose_name = "Магазин"
         verbose_name_plural = "Магазины"
 
     def get_absolute_url(self):
-        return reverse('magazine_detail', kwargs={"slug": self.name})
+        return reverse('magazine_detail', kwargs={"slug": self.market.name})
 
-    def save(self):
-        super(Magazine, self).save()
-        if not self.url:
-            self.url = self.market.username
-            super(Magazine, self).save()
+    # def save(self):
+    #     super(Magazine, self).save()
+    #     if not self.url:
+    #         self.url = self.market.username
+    #         super(Magazine, self).save()
 
 
 class Post(models.Model):
