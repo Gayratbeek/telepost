@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, DetailView
 from django.views.generic.base import View
 
-from .models import Post
+from .models import Post, Magazine
 from .forms import ReviewForm
 from django.contrib.auth.models import User
 
@@ -46,3 +46,11 @@ class MagazinePostListView(ListView):
         return Post.objects.filter(magazine__market=user)
 
     # order_by('-date_posted')
+
+
+class MagazineView(DetailView):
+    """Полное описание фильма"""
+    model = Magazine
+    context_object_name = 'magazine'
+    slug_field = 'market__username'
+    template_name = "market/market_detail.html"

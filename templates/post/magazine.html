@@ -6,16 +6,11 @@
 </head>
 <body>
 <div>
-    {% for post in posts %}
-        <article class="media content-section">
-          {{ post.magazine.telelink }}
-          <div class="media-body">
-            <div class="article-metadata">
-              <a class="mr-2" href="{% url 'magazine-posts' post.magazine.name %}">{{ post.magazine.name }}</a>
-
-          </div>
-        </article>
-    {% endfor %}
+{% for post in posts %}
+    <img src="{{ post.poster.url }}" alt=""><br>
+    {{ post.title }}<br>
+    {{ post.description }}<br>
+{% endfor %}
 </div>
 </body>
 </html>

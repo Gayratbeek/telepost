@@ -2,6 +2,12 @@ from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.utils.text import slugify
+from django.conf import settings
+from django.contrib.auth import get_user_model
+
+#
+# def get_sentinel_user():
+#     return get_user_model().objects.get_or_create(username='deleted')[0]
 
 
 class Category(models.Model):
@@ -24,50 +30,37 @@ class Category(models.Model):
             super(Category, self).save()
 
 
-class Link(models.Model):
-    name = models.CharField("Название магазина", max_length=100)
-    telelink = models.CharField("Ссылка на телеграм", max_length=50)
-    instalink = models.CharField("Ссылка на инстаграм", max_length=50)
-    otherlink = models.CharField("Ссылка на иную страницу", max_length=100, null=True, blank=True)
+class Magazine(models.Model):
+    """Магазин"""
+    market = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name="название")
+    telelink = models.CharField("Ссылка на телеграм", max_length=100)
+    delivery = models.BooleanField(default=False, verbose_name="Доставка")
+    click_uz = models.BooleanField(default=False, verbose_name="Онлайн платёж")
+    poster = models.ImageField("Главное фото", upload_to="product_images/", default="default.jpeg", blank=True,
+                               null=True)
 
     def __str__(self):
-        return '%s' % self.name
+        return self.market.username
 
     class Meta:
         verbose_name = "Магазин"
         verbose_name_plural = "Магазины"
 
-
-class Magazine(models.Model):
-    """Магазин"""
-    market = models.OneToOneField(Link, verbose_name="Название производителя", on_delete=models.CASCADE)
-    delivery = models.BooleanField(default=False, verbose_name="Доставка")
-    payment_click_uz = models.BooleanField(default=False, verbose_name="Оплата онлайн")
-    poster = models.ImageField("Постер магазина", upload_to="magazine_images/", null=True, blank=True,
-                               default="default.jpeg")
-
-    def __str__(self):
-        return self.market.name
-
-    class Meta:
-        verbose_name = "Возможность магазина"
-        verbose_name_plural = "Возможности магазина"
-
     def get_absolute_url(self):
-        return reverse('magazine_detail', kwargs={"slug": self.market.name})
-
-    # def save(self):
+        return reverse('magazine_detail', kwargs={"slug": self.market})
+    # def save(self, **kwargs):
     #     super(Magazine, self).save()
-    #     if not self.url:
-    #         self.url = self.market.username
+    #     if not self.market:
+    #         self.market = self.market
     #         super(Magazine, self).save()
+    #
 
 
 class Post(models.Model):
     """Пост"""
     title = models.CharField("Название", max_length=64)
-    poster = models.ImageField("Главное фото", upload_to="product_images/", null=True, blank=True,
-                               default="default.jpeg")
+    poster = models.ImageField("Главное фото", upload_to="product_images/", default="default.jpeg", blank=True,
+                               null=True)
     description = models.TextField("Описание")
     price = models.PositiveIntegerField("Стоимость", default=0, help_text="Указывать в сумах")
     magazine = models.ForeignKey(Magazine, verbose_name="Поставщик",
