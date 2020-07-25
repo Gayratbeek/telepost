@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.gis import forms
 from django.utils.safestring import mark_safe
-from .models import Category, Magazine, Post, PostImages, Rating, RatingStar, Reviews, Link
+from .models import Category, Magazine, Post, PostImages, Rating, RatingStar, Reviews
 
 
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
@@ -38,12 +38,6 @@ class ImageInlines(admin.TabularInline):
         return mark_safe(f'<img src={obj.image.url} width="50" height="60"')
 
     get_image.short_description = "Изображение"
-
-
-class MagazineInlines(admin.StackedInline):
-    model = Magazine
-
-
 
 
 @admin.register(Post)
@@ -83,9 +77,9 @@ class ReviewAdmin(admin.ModelAdmin):
 
 @admin.register(Magazine)
 class MagazineAdmin(admin.ModelAdmin):
-    list_display = ("market", "delivery", "payment_click_uz")
-    fields = ("market", "delivery", "payment_click_uz",)
-    list_editable = ("delivery", "payment_click_uz",)
+    list_display = ("market", "delivery", "click_uz",)
+    fields = ("market", "telelink", "delivery", "click_uz",)
+    list_editable = ("delivery", "click_uz",)
 
 
 @admin.register(PostImages)
@@ -100,14 +94,6 @@ class PostImagesAdmin(admin.ModelAdmin):
 
 admin.site.register(Rating)
 admin.site.register(RatingStar)
-
-@admin.register(Link)
-class LinkAdmin(admin.ModelAdmin):
-    list_display = ("name", "telelink", "instalink")
-    inlines = [MagazineInlines]
-
-
-
 
 
 def get_image(url):
