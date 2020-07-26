@@ -48,6 +48,10 @@ class Magazine(models.Model):
 
     def get_absolute_url(self):
         return reverse('magazine_detail', kwargs={"slug": self.market})
+
+    def get_magazine_posts(self):
+        return reverse("magazine_posts", kwargs={"username": self.market })
+
     # def save(self, **kwargs):
     #     super(Magazine, self).save()
     #     if not self.market:
@@ -80,6 +84,9 @@ class Post(models.Model):
 
     def get_absolute_url(self):
         return reverse("post_detail", kwargs={"slug": self.url})
+
+    def get_magazine_posts(self):
+        return reverse("magazine_posts", kwargs={"slug": self.magazine.market.username })
 
     def get_review(self):
         return self.reviews_set.filter(parent__isnull=True)
