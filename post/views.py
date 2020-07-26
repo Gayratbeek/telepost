@@ -10,18 +10,18 @@ from django.contrib.auth.models import User
 def home(request):
     return render(request, 'home.html', {})
 
+
 class PostView(ListView):
     """Список постов"""
     model = Post
     queryset = Post.objects.filter(draft=False)
-    #template_name = "posts/post_list.html"
+    paginate_by = 5
 
 
 class PostDetailView(DetailView):
     """Полное описание фильма"""
     model = Post
     slug_field = 'url'
-    #template_name = "posts/post_detail.html"
 
 
 class AddReview(View):
@@ -42,7 +42,7 @@ class MagazinePostListView(ListView):
     model = Post
     template_name = 'post/magazine_posts.html'  # <app>/<model>_<viewtype>.html
     context_object_name = 'posts'
-    paginate_by = 5
+    paginate_by = 3
     # queryset = Post.objects.filter(draft=False)
 
     def get_queryset(self):
@@ -58,3 +58,5 @@ class MagazineView(DetailView):
     context_object_name = 'mpost'
     slug_field = 'market__username'
     template_name = "market/market_detail.html"
+
+
