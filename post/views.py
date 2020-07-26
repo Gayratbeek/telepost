@@ -28,7 +28,7 @@ class AddReview(View):
     """Отзывы"""
     def post(self, request, pk):
         form = ReviewForm(request.POST)
-        posting = Post.objects.get(id=pk)
+        posting = get_object_or_404(Post, id=pk)
         if form.is_valid():
             form = form.save(commit=False)
             if request.POST.get("parent", None):
