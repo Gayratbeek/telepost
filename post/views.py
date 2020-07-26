@@ -7,6 +7,9 @@ from .forms import ReviewForm
 from django.contrib.auth.models import User
 
 
+def home(request):
+    return render(request, 'home.html', {})
+
 class PostView(ListView):
     """Список постов"""
     model = Post
@@ -37,9 +40,10 @@ class AddReview(View):
 
 class MagazinePostListView(ListView):
     model = Post
-    template_name = 'post/magazine.html'  # <app>/<model>_<viewtype>.html
+    template_name = 'post/magazine_posts.html'  # <app>/<model>_<viewtype>.html
     context_object_name = 'posts'
     paginate_by = 5
+    # queryset = Post.objects.filter(draft=False)
 
     def get_queryset(self):
         user = get_object_or_404(User, username=self.kwargs.get('username'))
@@ -51,6 +55,6 @@ class MagazinePostListView(ListView):
 class MagazineView(DetailView):
     """Полное описание фильма"""
     model = Magazine
-    context_object_name = 'magazine'
+    context_object_name = 'mpost'
     slug_field = 'market__username'
     template_name = "market/market_detail.html"
