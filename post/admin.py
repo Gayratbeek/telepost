@@ -84,7 +84,7 @@ class MagazineAdmin(admin.ModelAdmin):
 
 @admin.register(PostImages)
 class PostImagesAdmin(admin.ModelAdmin):
-    list_display = ("title", "post", "get_image")
+    list_display = ("titleimage", "post", "get_image")
     readonly_fields = ("get_image",)
 
     def get_image(self, obj):
@@ -92,7 +92,11 @@ class PostImagesAdmin(admin.ModelAdmin):
 
     get_image.short_description = "Изображение"
 
-admin.site.register(Rating)
+@admin.register(Rating)
+class RatingAdmin(admin.ModelAdmin):
+    """Рейтинг"""
+    list_display = ("star", "post", "ip")
+
 admin.site.register(RatingStar)
 
 
