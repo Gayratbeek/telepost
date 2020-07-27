@@ -82,6 +82,9 @@ class Post(models.Model):
         verbose_name = "Пост"
         verbose_name_plural = "Посты"
 
+    def __unicode__(self):
+        return self.title
+
     def get_absolute_url(self):
         return reverse("post_detail", kwargs={"slug": self.url})
 
@@ -98,12 +101,17 @@ class Post(models.Model):
             super(Post, self).save()
 
 
+
 class PostImages(models.Model):
     """Изображения поста в большом количестве"""
-    title = models.CharField("Заголовок", max_length=100)
+    titleimage = models.CharField("Заголовок", max_length=100)
     # description = models.TextField("Описание")
     image = models.ImageField("Изображение", upload_to="product_images/")
     post = models.ForeignKey(Post, verbose_name="Пост", on_delete=models.CASCADE)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.title = None
 
     def __str__(self):
         return self.title
@@ -118,18 +126,19 @@ class RatingStar(models.Model):
     value = models.SmallIntegerField("Значение", default=0)
 
     def __str__(self):
-        return self.value
+        return f'{self.value}'
 
     class Meta:
         verbose_name = "Звезда рейтинга"
         verbose_name_plural = "Звезды рейтинга"
+        ordering = ["-value"]
 
 
 class Rating(models.Model):
     """Звезда рейтинга"""
     ip = models.CharField("IP адрес", max_length=15)
     star = models.ForeignKey(RatingStar, on_delete=models.CASCADE, verbose_name="звезда")
-    post = models.ForeignKey(Post, on_delete=models.CharField, verbose_name="пост")
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, verbose_name="пост")
 
     def __str__(self):
         return f"{self.star} - {self.post}"
