@@ -86,7 +86,7 @@ class MagazinePostListView(ListView):
     model = Post
     template_name = 'post/magazine_posts.html'  # <app>/<model>_<viewtype>.html
     context_object_name = 'posts'
-    paginate_by = 10
+    paginate_by = 6
     # queryset = Post.objects.filter(draft=False)
 
     def get_queryset(self):
