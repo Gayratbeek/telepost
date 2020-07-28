@@ -55,7 +55,7 @@ class PostAdmin(admin.ModelAdmin):
             "fields": ("title",)
         }),
         (None, {
-            "fields": ("description", ("price", "poster", "get_image"),)
+            "fields": ("description", ("price", "old", "poster", "get_image"),)
         }),
         (None, {
             "fields": ("magazine", "category", "draft",)
