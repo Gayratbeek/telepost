@@ -1,9 +1,11 @@
+import transliterate as transliterate
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.utils.text import slugify
 from django.conf import settings
 from django.contrib.auth import get_user_model
+
 
 #
 # def get_sentinel_user():
@@ -23,10 +25,10 @@ class Category(models.Model):
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
 
-    def save(self):
+    def save(self, **kwargs):
         super(Category, self).save()
         if not self.url:
-            self.url = slugify(self.name) + '-' + str(self.id)
+            self.url = slugify(transliterate.translit(self.name, reversed=True))
             super(Category, self).save()
 
 
@@ -50,7 +52,7 @@ class Magazine(models.Model):
         return reverse('magazine_detail', kwargs={"slug": self.market})
 
     def get_magazine_posts(self):
-        return reverse("magazine_posts", kwargs={"username": self.market })
+        return reverse("magazine_posts", kwargs={"username": self.market})
 
     # def save(self, **kwargs):
     #     super(Magazine, self).save()
@@ -66,6 +68,7 @@ class Post(models.Model):
     poster = models.ImageField("Главное фото", upload_to="product_images/", default="default.jpeg", blank=True,
                                null=True)
     description = models.TextField("Описание")
+    characteristics = models.TextField("Характеристики", blank=True, null=True, default="Нет характеристики.")
     price = models.PositiveIntegerField("Стоимость", default=0, help_text="Указывать в сумах")
     magazine = models.ForeignKey(Magazine, verbose_name="Поставщик",
                                  on_delete=models.SET_DEFAULT, default='Magazine')
@@ -89,32 +92,31 @@ class Post(models.Model):
         return reverse("post_detail", kwargs={"slug": self.url})
 
     def get_magazine_posts(self):
-        return reverse("magazine_posts", kwargs={"slug": self.magazine.market.username })
+        return reverse("magazine_posts", kwargs={"slug": self.magazine.market.username})
 
     def get_review(self):
         return self.reviews_set.filter(parent__isnull=True)
 
-    def save(self):
+    def save(self, **kwargs):
         super(Post, self).save()
         if not self.url:
             self.url = slugify(self.title) + '-' + str(self.id)
             super(Post, self).save()
 
 
-
 class PostImages(models.Model):
     """Изображения поста в большом количестве"""
+    post = models.ForeignKey(Post, verbose_name="Пост", blank=True, null=True, on_delete=models.CASCADE, default=None)
     titleimage = models.CharField("Заголовок", max_length=100)
     # description = models.TextField("Описание")
-    image = models.ImageField("Изображение", upload_to="product_images/")
-    post = models.ForeignKey(Post, verbose_name="Пост", on_delete=models.CASCADE)
+    image = models.ImageField("Изображение", upload_to="product_images/", blank=True, null=True, default="Изображение продукта")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.title = None
 
     def __str__(self):
-        return self.title
+        return self.titleimage
 
     class Meta:
         verbose_name = "Фотки поста"
@@ -156,6 +158,7 @@ class Reviews(models.Model):
     parent = models.ForeignKey('self', verbose_name="Родитель",
                                on_delete=models.SET_NULL, blank=True, null=True)
     post = models.ForeignKey(Post, verbose_name="пост", on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.name} - {self.post}"

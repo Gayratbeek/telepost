@@ -60,6 +60,9 @@ class PostAdmin(admin.ModelAdmin):
         (None, {
             "fields": ("magazine", "category", "draft",)
         }),
+        (None, {
+            "fields": ('characteristics',)
+        }),
     )
     readonly_fields = ("get_image",)
 

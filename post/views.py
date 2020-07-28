@@ -10,7 +10,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic.base import View
 from django.views.generic.detail import SingleObjectMixin
 
-from .models import Post, Magazine, Rating
+from .models import Post, Magazine, Rating, PostImages
 from .forms import ReviewForm, RatingForm
 from django.contrib.auth.models import User
 
@@ -21,6 +21,11 @@ from django.contrib.auth.models import User
 #     def get_posts(self):
 #         user = get_object_or_404(User, username=self.kwargs.get('username'))
 #         return Post.objects.filter(magazine__market=user)
+
+
+class AllImages():
+    def get_image(self):
+        return PostImages.objects.all()
 
 
 def get_client_ip(self, request):
