@@ -1,0 +1,11 @@
+{% extends 'post/base.html' %}
+{% block content %}
+{% for post in posts %}
+    <img src="{{ post.poster.url }}" alt="" width="50"><br>
+    {{ post.title }}<br>
+    {{ post.description|safe }}<br>
+    <a href="{{ post.get_absolute_url }}">Detail</a><br>
+{% endfor %}
+    {{ magazine.market.username }}
+    {% include 'include/pagination.html'%}
+{% endblock %}
