@@ -1,0 +1,4 @@
+<div><h2>Недавно добавленные магазины</h2></div>
+{% for magazine in last_magazines %}
+    <div><a href="{{ magazine.get_absolute_url }}">{{ magazine.market.username }}</a></div>
+{% endfor %}
