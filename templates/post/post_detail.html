@@ -67,7 +67,7 @@
 								<a class="review-link" href="#review">10 коменнтариев | Добавить комментарий</a>
 							</div>
 							<div>
-								<h3 class="product-price">{{ post.price }} <del class="product-old-price">$990.00</del></h3>
+								<h3 class="product-price">{{ post.price }}$ {% if post.old %}<del class="product-old-price">{{ post.old }}$</del>{% endif %}</h3>
 								<span class="product-available">В наличии</span>
 							</div>
 							<p>{{ post.description|truncatechars:255|safe }}</p>
@@ -441,7 +441,7 @@
 							</div>
 							<div class="product-body">
 								<p class="product-category">Категория</p>
-								<h3 class="product-name"><a href="#">Наименование товара</a></h3>
+								<h3 class="product-name"><a href="#">Наименование товара1</a></h3>
 								<h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
 								<div class="product-rating">
 									<i class="fa fa-star"></i>

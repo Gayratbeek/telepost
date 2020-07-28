@@ -54,6 +54,7 @@ class Magazine(models.Model):
     def get_magazine_posts(self):
         return reverse("magazine_posts", kwargs={"username": self.market})
 
+
     # def save(self, **kwargs):
     #     super(Magazine, self).save()
     #     if not self.market:
@@ -70,6 +71,7 @@ class Post(models.Model):
     description = models.TextField("Описание")
     characteristics = models.TextField("Характеристики", blank=True, null=True, default="Нет характеристики.")
     price = models.PositiveIntegerField("Стоимость", default=0, help_text="Указывать в сумах")
+    old = models.PositiveIntegerField("Старая цена", blank=True, null=True)
     magazine = models.ForeignKey(Magazine, verbose_name="Поставщик",
                                  on_delete=models.SET_DEFAULT, default='Magazine')
     category = models.ForeignKey(Category, verbose_name="Категория", on_delete=models.SET_NULL, null=True)
