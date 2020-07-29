@@ -2,15 +2,15 @@
 ```
 pip install -r requirements.txt
 ```
-##### Запуск сервера
-Удалить базу данных sqlite3.db, потом создать миграции.
-```
-python manage.py runserver
-```
 ##### Подготовка базы данных
+Удалить базу данных sqlite3.db, потом создать миграции.
 ```
 python manage.py makemigrations post
 python manage.py migrate
+```
+##### Запуск сервера
+```
+python manage.py runserver
 ```
 ##### Создание супервользователя (Хотяяя, возможно там уже создан)
 ```
