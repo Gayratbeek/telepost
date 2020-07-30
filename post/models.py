@@ -1,4 +1,4 @@
-import transliterate as transliterate
+from transliterate import translit
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
@@ -6,20 +6,19 @@ from django.utils.text import slugify
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
-
-#
-# def get_sentinel_user():
-#     return get_user_model().objects.get_or_create(username='deleted')[0]
+from mptt.models import MPTTModel, TreeForeignKey
 
 
-class Category(models.Model):
-    """Категория поста"""
-    name = models.CharField("Категория", max_length=64)
-    description = models.TextField("Описание")
+class Category(MPTTModel):
+    name = models.CharField(max_length=50, unique=True)
+    parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
     url = models.SlugField(max_length=70, unique=True, blank=True, null=True)
 
     def __str__(self):
         return self.name
+
+    class MPTTMeta:
+        order_insertion_by = ['name']
 
     class Meta:
         verbose_name = "Категория"
@@ -28,7 +27,10 @@ class Category(models.Model):
     def save(self, **kwargs):
         super(Category, self).save()
         if not self.url:
-            self.url = slugify(transliterate.translit(self.name, reversed=True))
+            self.url = slugify(translit(self.name, 'ru', reversed=True))
+            super(Category, self).save()
+        elif self.url != slugify(translit(self.name, 'ru', reversed=True)):
+            self.url = slugify(translit(self.name, 'ru', reversed=True))
             super(Category, self).save()
 
 
@@ -53,14 +55,6 @@ class Magazine(models.Model):
 
     def get_magazine_posts(self):
         return reverse("magazine_posts", kwargs={"username": self.market})
-
-
-    # def save(self, **kwargs):
-    #     super(Magazine, self).save()
-    #     if not self.market:
-    #         self.market = self.market
-    #         super(Magazine, self).save()
-    #
 
 
 class Post(models.Model):
@@ -102,7 +96,10 @@ class Post(models.Model):
     def save(self, **kwargs):
         super(Post, self).save()
         if not self.url:
-            self.url = slugify(self.title) + '-' + str(self.id)
+            self.url = slugify(translit(self.title, 'ru', reversed=True)) + '-' + str(self.id)
+            super(Post, self).save()
+        elif self.url != slugify(translit(self.title, 'ru', reversed=True)):
+            self.url = slugify(translit(self.title, 'ru', reversed=True))
             super(Post, self).save()
 
 
@@ -111,7 +108,8 @@ class PostImages(models.Model):
     post = models.ForeignKey(Post, verbose_name="Пост", blank=True, null=True, on_delete=models.CASCADE, default=None)
     titleimage = models.CharField("Заголовок", max_length=100)
     # description = models.TextField("Описание")
-    image = models.ImageField("Изображение", upload_to="product_images/", blank=True, null=True, default="Изображение продукта")
+    image = models.ImageField("Изображение", upload_to="product_images/", blank=True, null=True, default="Изображение "
+                                                                                                         "продукта")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

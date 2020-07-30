@@ -10,7 +10,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic.base import View
 from django.views.generic.detail import SingleObjectMixin
 
-from .models import Post, Magazine, Rating, PostImages
+from .models import Post, Magazine, Rating, PostImages, Category
 from .forms import ReviewForm, RatingForm
 from django.contrib.auth.models import User
 
@@ -39,6 +39,10 @@ def get_client_ip(self, request):
 
 def home(request):
     return render(request, 'product.html', {})
+
+
+def category(request):
+    return render(request, "category.html", {'category': Category.objects.all()})
 
 
 class PostView(ListView):

@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.gis import forms
 from django.utils.safestring import mark_safe
 from .models import Category, Magazine, Post, PostImages, Rating, RatingStar, Reviews
-
+from mptt.admin import DraggableMPTTAdmin
 
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 
@@ -13,14 +13,6 @@ class PostAdminForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = '__all__'
-
-@admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "url")
-    list_display_links = ("name",)
-    fields = ("name",)
-
-
 
 
 class ReviewInlines(admin.TabularInline):
@@ -77,6 +69,39 @@ class ReviewAdmin(admin.ModelAdmin):
     list_display = ("name", "email", "parent", "post", "id")
 
 
+@admin.register(Category)
+class CategoryAdmin(DraggableMPTTAdmin):
+    mptt_indent_field = "name"
+    list_display = ('tree_actions', 'indented_title',
+                    'related_products_count', 'related_products_cumulative_count')
+    list_display_links = ('indented_title',)
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+
+        # Add cumulative product count
+        qs = Category.objects.add_related_count(
+                qs,
+                Post,
+                'category',
+                'products_cumulative_count',
+                cumulative=True)
+
+        # Add non cumulative product count
+        qs = Category.objects.add_related_count(qs,
+                 Post,
+                 'category',
+                 'products_count',
+                 cumulative=False)
+        return qs
+
+    def related_products_count(self, instance):
+        return instance.products_count
+    related_products_count.short_description = 'Все продукты на ЭТОЙ субкатегории'
+
+    def related_products_cumulative_count(self, instance):
+        return instance.products_cumulative_count
+    related_products_cumulative_count.short_description = 'Все продукты на ВСЕЙ категории '
 
 @admin.register(Magazine)
 class MagazineAdmin(admin.ModelAdmin):
