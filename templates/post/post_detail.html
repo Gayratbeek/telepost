@@ -1,4 +1,4 @@
-{% extends 'post/base.html' %}{% load static %}{% load mptt_tags %}
+{% extends 'post/base.html' %}{% load static %}
 {% block content %}
    		<!-- BREADCRUMB -->
 		<div id="breadcrumb" class="section">
@@ -6,15 +6,14 @@
 			<div class="container">
 				<!-- row -->
 				<div class="row">
-					<div class="col-md-12"> {% recursetree category %}
+					<div class="col-md-12">
 						<ul class="breadcrumb-tree">
-							<li><a href="/">{{ node.title }}</a></li>
-							{% if not node.is_leaf_node %}<li><a href="/">{{ children }}</a></li>
-							 {% endif %}
-                            <li><a href="#">Аксессуары</a></li>
+							<li><a href="/">Главная</a></li>
+							<li><a href="/{{ post.category.url }}">{{ post.category.name }}</a></li>
+							<li><a href="#">Аксессуары</a></li>
 							<li><a href="#">Наушники</a></li>
 							<li class="active">Наименование товара</li>
-						</ul>{% endrecursetree %}
+						</ul>
 					</div>
 				</div>
 				<!-- /row -->
