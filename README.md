@@ -9,7 +9,7 @@ python manage.py migrate
 
 ##### При добавлении главной категории комментировать models.category 
 ```
-def save(self. *args, **kwargs)
+def save(self. *args, **kwargs) """Комментировать при первой категории нижние 4 строки"""
 # super(Category, self).save()
 #       if self.parent.mptt_level is not None:
 #            if self.parent.mptt_level == 3:
