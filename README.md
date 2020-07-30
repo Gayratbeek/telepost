@@ -7,9 +7,10 @@ pip install -r requirements.txt
 python manage.py migrate
 ```
 
-##### При добавлении главной категории комментировать 
+##### При добавлении главной категории комментировать models.category 
 ```
-#super(Category, self).save()
+#def save(self. *args, **kwargs)
+# super(Category, self).save()
 #       if self.parent.mptt_level is not None:
 #            if self.parent.mptt_level == 3:
 #                raise ValueError(u'Достигнута максимальная вложенность!')
