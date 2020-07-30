@@ -6,6 +6,14 @@ pip install -r requirements.txt
 ```
 python manage.py migrate
 ```
+
+##### При добавлении главной категории комментировать 
+```
+#super(Category, self).save()
+#       if self.parent.mptt_level is not None:
+#            if self.parent.mptt_level == 3:
+#                raise ValueError(u'Достигнута максимальная вложенность!')
+```
 ##### Создание супервользователя (Хотяяя, возможно там уже создан)
 ```
 python manage.py createsuperuser
