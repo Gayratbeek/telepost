@@ -1,5 +1,6 @@
 {% extends 'post/base.html' %}{% load static %}
 {% block content %}
+
    		<!-- BREADCRUMB -->
 		<div id="breadcrumb" class="section">
 			<!-- container -->
@@ -8,11 +9,10 @@
 				<div class="row">
 					<div class="col-md-12">
 						<ul class="breadcrumb-tree">
-							<li><a href="/">Главная</a></li>
-							<li><a href="/{{ post.category.url }}">{{ post.category.name }}</a></li>
-							<li><a href="#">Аксессуары</a></li>
-							<li><a href="#">Наушники</a></li>
-							<li class="active">Наименование товара</li>
+                            <li><a href="/">Главная</a></li>
+                            {% for category in post.category.get_ancestors %}<li><a href="/{{ category.url }}">{{ category.name }}</a></li>
+                            {% endfor %}
+                            <li class="active">{{ post.title }}</li>
 						</ul>
 					</div>
 				</div>
@@ -55,6 +55,16 @@
 					<!-- Product details -->
 					<div class="col-md-5">
 						<div class="product-details">
+                        {% if object.magazine.market == user %}
+                          <div>
+                              <a href="{% url 'post-update' object.url %}">
+                                  <button class="btn btn-success btn-sm rounded-0" type="button" data-toggle="tooltip"
+                                          data-placement="top" title="Edit"><i class="fa fa-edit"></i></button></a>
+                              <a href="{% url 'post-delete' object.url %}">
+                                  <button class="btn btn-danger btn-sm rounded-0" type="button" data-toggle="tooltip"
+                                          data-placement="top" title="Delete"><i class="fa fa-trash"></i></button></a>
+                          </div>
+                        {% endif %}
 							<h2 class="product-name">{{ post.title }} </h2>
 							<div>
 								<div class="product-rating">
@@ -64,8 +74,8 @@
 									<i class="fa fa-star"></i>
 									<i class="fa fa-star-o"></i>
 								</div>
-								<a class="review-link" href="#review">10 коменнтариев | Добавить комментарий</a>
-							</div>
+								<a class="review-link" href="#reviews">{{ post.reviews_set.count }} коменнтариев | Добавить комментарий</a>
+                                </div>
 							<div>
 								<h3 class="product-price">{{ post.price }}$ {% if post.old %}<del class="product-old-price">{{ post.old }}$</del>{% endif %}</h3>
 								<span class="product-available">В наличии</span>
@@ -106,7 +116,7 @@
 
 							<ul class="product-links">
 								<li>Категории:</li>
-								<li><a href="{{ post.category.url }}">{{ post.category }}</a></li>
+								<li><a href="/{{ post.category.url }}">{{ post.category }}</a></li>
 								<li><a href="#">Аксессуары</a></li>
 							</ul>
                             <ul class="product-links">
@@ -247,8 +257,8 @@
 										<!-- /Rating -->
 
 										<!-- Reviews -->
+{#                                    <div id="content">#}
 										<div class="col-md-6">
-											<div id="reviews">
 												<ul class="reviews">
                                                     {% for review in post.get_review %}
 													<li>
@@ -276,7 +286,6 @@
 													<li><a href="#">4</a></li>
 													<li><a href="#"><i class="fa fa-angle-right"></i></a></li>
 												</ul>
-											</div>
 										</div>
 										<!-- /Reviews -->
 
@@ -305,7 +314,7 @@
 													<button class="primary-btn" type="submit">Опубликовать</button>
 												</form>
 											</div>
-										</div>
+                                        </div>
 										<!-- /Review Form -->
 									</div>
 								</div>
@@ -469,6 +478,7 @@
 			<!-- /container -->
 		</div>
 		<!-- /Section -->
+
 <script>
     function addReview(name, id) {
         document.getElementById("contactparent").value = id;

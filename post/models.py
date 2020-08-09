@@ -14,24 +14,29 @@ class Category(MPTTModel):
     parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
     url = models.SlugField(max_length=70, unique=True, blank=True, null=True)
 
-    def __str__(self):
-        return self.name
-
-    class MPTTMeta:
-        order_insertion_by = ['name']
-
-    class Meta:
-        verbose_name = "Категория"
-        verbose_name_plural = "Категории"
-
-    def save(self, **kwargs):
+    def save(self, *args, **kwargs):
         super(Category, self).save()
+        if self.parent.mptt_level is not None:
+            if self.parent.mptt_level == 3:
+                raise ValueError(u'Достигнута максимальная вложенность!')
         if not self.url:
             self.url = slugify(translit(self.name, 'ru', reversed=True))
             super(Category, self).save()
         elif self.url != slugify(translit(self.name, 'ru', reversed=True)):
             self.url = slugify(translit(self.name, 'ru', reversed=True))
             super(Category, self).save()
+        super(Category, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+
+    class MPTTMeta:
+        level_attr = 'mptt_level'
+        order_insertion_by = ['name']
+
+    class Meta:
+        verbose_name = "Категория"
+        verbose_name_plural = "Категории"
 
 
 class Magazine(models.Model):
@@ -81,9 +86,6 @@ class Post(models.Model):
         verbose_name = "Пост"
         verbose_name_plural = "Посты"
 
-    def __unicode__(self):
-        return self.title
-
     def get_absolute_url(self):
         return reverse("post_detail", kwargs={"slug": self.url})
 
@@ -106,7 +108,7 @@ class Post(models.Model):
 class PostImages(models.Model):
     """Изображения поста в большом количестве"""
     post = models.ForeignKey(Post, verbose_name="Пост", blank=True, null=True, on_delete=models.CASCADE, default=None)
-    titleimage = models.CharField("Заголовок", max_length=100)
+    titleimage = models.CharField("Заголовок", max_length=100, blank=True, null=True, default="image_title")
     # description = models.TextField("Описание")
     image = models.ImageField("Изображение", upload_to="product_images/", blank=True, null=True, default="Изображение "
                                                                                                          "продукта")

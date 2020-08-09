@@ -1,15 +1,20 @@
 {% extends "post/base.html" %}
 {% block content %}
-    <div class="content-section">
-        <form method="POST">
-            {% csrf_token %}
-            <fieldset class="form-group">
-                <legend class="border-bottom mb-4">Blog Post</legend>
-                {{ form }}
-            </fieldset>
-            <div class="form-group">
-                <button class="btn btn-outline-info" type="submit">Post</button>
-            </div>
-        </form>
+
+    {% for e in form.non_field_errors %}
+        <div class="alert alert-danger">{{ e }}</div>
+    {% endfor %}
+    <form action="/post/">
+        <fieldset>
+            {% for field in form %}
+                <div class="control-group {% if field.errors %}has-error{% endif %}">
+                <label class="control-label">{{ field.label }}</label>
+                <div class="controls">{{ field }}</div>
+                </div>
+            {% endfor %}
+        </fieldset>
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Сохранить</button>
     </div>
+    </form>
 {% endblock content %}

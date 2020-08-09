@@ -15,12 +15,33 @@ from .forms import ReviewForm, RatingForm
 from django.contrib.auth.models import User
 
 
-# class AllPostsMagazine:
-#     """Жанры и года выхода фильмов"""
-#
-#     def get_posts(self):
-#         user = get_object_or_404(User, username=self.kwargs.get('username'))
-#         return Post.objects.filter(magazine__market=user)
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404
+
+from .models import Category
+from mptt.exceptions import InvalidMove
+from mptt.forms import MoveNodeForm
+
+
+def move_category(request, url):
+    category_in = get_object_or_404(Category, url=url)
+
+    if request.method == 'POST':
+        form = MoveNodeForm(category_in, request.POST)
+        if form.is_valid():
+            try:
+                category_in = form.save()
+                return HttpResponseRedirect(category.get_absolute_url())
+            except InvalidMove:
+                pass
+    else:
+        form = MoveNodeForm(category_in)
+    context = {
+        'form': form,
+        'category': category_in,
+        'category_tree': Category.objects.filter(mptt_level=1),
+    }
+    return render(request, 'post/move_category.html', context)
 
 
 class AllImages():
@@ -38,11 +59,11 @@ def get_client_ip(self, request):
 
 
 def home(request):
-    return render(request, 'product.html', {})
+    return render(request, 'home.html', {})
 
 
 def category(request):
-    return render(request, "category.html", {'category': Category.objects.all()})
+    return render(request, "category.html", {'category': Category.objects.filter(level=2)})
 
 
 class PostView(ListView):
@@ -57,6 +78,7 @@ class PostDetailView(DetailView):
     model = Post
     slug_field = 'url'
 
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["star_form"] = RatingForm()
@@ -70,6 +92,34 @@ class PostCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.magazine.market = self.request.user
         return super().form_valid(form)
+
+
+class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Post
+    fields = ['title', 'description', 'characteristics', 'poster', 'price', 'old']
+    slug_field = 'url'
+
+    def form_valid(self, form):
+        form.instance.magazine.market = self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        post = self.get_object()
+        if self.request.user == post.magazine.market:
+            return True
+        return False
+
+
+class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Post
+    success_url = '/'
+    slug_field = 'url'
+
+    def test_func(self):
+        post = self.get_object()
+        if self.request.user == post.magazine.market:
+            return True
+        return False
 
 
 class AddReview(View):

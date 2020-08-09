@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% load mptt_tags %}
+{#<ul>#}
+{#    {% recursetree category_tree %}#}
+{#        <li>#}
+{#            {{ node.name }}#}
+{#            {% if not node.is_leaf_node %}#}
+{#                <ul class="children">#}
+{#                    {{ children }}#}
+{#                </ul>#}
+{#            {% endif %}#}
+{#        </li>#}
+{#    {% endrecursetree %}#}
+{#</ul>#}
+{#<ul class="root">#}
+{#    {% recursetree category_tree %}#}
+{#        <li>#}
+{#            {{ node.url }}#}
+{#            {% if not category_tree.is_leaf_node %}#}
+{#                <ul class="children">#}
+{#                    {{ node.name }}#}
+{#                </ul>#}
+{#            {% endif %}#}
+{#        </li>#}
+{#    {% endrecursetree %}#}
+{#</ul>#}
+<select name="classifiers" multiple="multiple" size="10">
+    {% for node,structure in category_tree|tree_info:"ancestors" %}
+        {% if node.is_child_node %}
+            <option value="{{ node.pk }}">
+                {{ structure.ancestors|tree_path }} :: {{ node }}
+            </option>
+        {% endif %}
+    {% endfor %}
+</select>
+
+</body>
+</html>
