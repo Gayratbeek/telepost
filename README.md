@@ -1,6 +1,7 @@
 ### Установка
 ```
 pip install -r requirements.txt
+python manage.py collectstatic
 ```
 ##### Подготовка базы данных
 ```
