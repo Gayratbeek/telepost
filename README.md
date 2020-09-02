@@ -1,7 +1,8 @@
 ### Установка
 ```
 pip install -r requirements.txt
-python manage.py collectstatic
+python manage.py collectstatic """Только надо поменять настройки глобальной статических настроек в settings.py"""
+sudo apt-get install gdal-bin """Установка отображений утилит в убунту"""
 ```
 ##### Подготовка базы данных
 ```
